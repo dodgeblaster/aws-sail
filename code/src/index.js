@@ -1,7 +1,5 @@
 const db = require("./db")
-
 const ALLOWED_MODES = ["real", "local", "recordActionsInDb"]
-
 module.exports = (config) => {
     // REQUIRED SETUP
     if (!config.setup) {
@@ -17,7 +15,7 @@ module.exports = (config) => {
      * real is good for actual deployed usage
      * local is good for local unit testing
      * recordActionsInDb is good for E2E testing
-     *
+     * - https://medium.com/theburningmonk-com/how-to-include-sns-and-kinesis-in-your-e2e-tests-d73c6d80e874
      *
      */
     if (!ALLOWED_MODES.includes(config.setup.mode)) {
@@ -30,7 +28,7 @@ module.exports = (config) => {
         const table = config.db.table
         const region = config.db.region
 
-        utils.db = db({
+        awsSail.db = db({
             mode,
             region,
             table,

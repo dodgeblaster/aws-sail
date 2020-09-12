@@ -1,0 +1,25 @@
+Resources:
+    CognitoUserPoolMyUserPool:
+        Type: AWS::Cognito::UserPool
+        Properties:
+            UserPoolName: ${self:custom.stage}-${self:custom.userPool}-user-pool
+            UsernameAttributes:
+                - email
+            AutoVerifiedAttributes:
+                - email
+
+            AdminCreateUserConfig:
+                AllowAdminCreateUserOnly: true
+                InviteMessageTemplate:
+                    EmailSubject: You are being invited to join our app
+                UnusedAccountValidityDays: 365
+
+    CognitoUserPoolClient:
+        Type: AWS::Cognito::UserPoolClient
+        Properties:
+            ClientName: ${self:custom.stage}-${self:custom.userPool}-user-pool-client
+            UserPoolId:
+                Ref: CognitoUserPoolMyUserPool
+            ExplicitAuthFlows:
+                - ADMIN_NO_SRP_AUTH
+            GenerateSecret: false
