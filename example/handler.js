@@ -1,41 +1,42 @@
 const awssail = require("aws-sail")
 
-const { db } = awssail({
+const { db, hook, httpTryCatch } = awssail({
     setup: {
         mode: "real",
     },
-
     db: {
         table: process.env.TABLE,
         region: process.env.REGION,
     },
+    codeDeploy: {
+        endpoint: process.env.ENDPOINT,
+    },
 })
 
-const httpTryCatch = (fn) => async (e) => {
-    try {
-        const res = await fn(e)
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify(res),
-        }
-    } catch (e) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ mesage: e.message }),
-        }
-    }
-}
-
 module.exports.get = httpTryCatch(async (event) => {
-    const all = await db.query({
-        PK: "something",
-        SK: "note_",
-    })
+    const id = event.pathParameters.id
+
     return await db.get({
         PK: "something",
-        SK: all[0].SK,
+        SK: id,
     })
+})
+
+module.exports.getHook = hook(async ({ axios, url, getMockedEvents }) => {
+    // if (process.env.stage === "staging") {
+    const x = await db.create({
+        PK: "something",
+        SK: "note_@id",
+        comment: "Hello",
+    })
+
+    const res = await axios(url + "/get/" + x.SK)
+    await db.remove(x)
+
+    if (res.data === x) {
+        return { success: true }
+    }
+    return { success: false }
 })
 
 module.exports.query = httpTryCatch(async (event) => {

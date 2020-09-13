@@ -5,33 +5,33 @@ Resources:
             TableName: ${self:service}-${self:provider.stage}
             AttributeDefinitions:
                 - AttributeName: PK
-                    AttributeType: S
+                  AttributeType: S
                 - AttributeName: SK
-                    AttributeType: S
+                  AttributeType: S
                 - AttributeName: GSI1
-                    AttributeType: S
+                  AttributeType: S
                 - AttributeName: GSI2
-                    AttributeType: S
+                  AttributeType: S
             KeySchema:
                 - AttributeName: PK
-                    KeyType: HASH
+                  KeyType: HASH
                 - AttributeName: SK
-                    KeyType: RANGE
+                  KeyType: RANGE
             BillingMode: PAY_PER_REQUEST
             GlobalSecondaryIndexes:
                 - IndexName: GSI1
-                    KeySchema:
-                        - AttributeName: GSI1
+                  KeySchema:
+                      - AttributeName: GSI1
                         KeyType: HASH
-                        - AttributeName: SK
+                      - AttributeName: SK
                         KeyType: RANGE
-                    Projection:
-                        ProjectionType: ALL
+                  Projection:
+                      ProjectionType: ALL
                 - IndexName: GSI2
-                    KeySchema:
-                        - AttributeName: GSI2
+                  KeySchema:
+                      - AttributeName: GSI2
                         KeyType: HASH
-                        - AttributeName: SK
+                      - AttributeName: SK
                         KeyType: RANGE
-                    Projection:
-                        ProjectionType: ALL
+                  Projection:
+                      ProjectionType: ALL

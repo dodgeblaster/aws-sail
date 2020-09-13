@@ -2,6 +2,7 @@ service: sls-sail-example
 
 plugins:
     - serverless-pseudo-parameters
+    - serverless-plugin-canary-deployments
 
 custom:
     stage: ${opt:stage, self:provider.stage}
@@ -34,14 +35,24 @@ provider:
               - dynamodb:UpdateItem
               - dynamodb:DeleteItem
           Resource: "arn:aws:dynamodb:#{AWS::Region}:#{AWS::AccountId}:table/${self:service}-${opt:stage, self:provider.stage}"
-
+        - Effect: Allow
+          Action:
+              - codedeploy:*
+          Resource:
+              - "*"
 functions:
     get:
         handler: handler.get
         events:
             - http:
-                  path: /get
+                  path: /get/{id}
                   method: get
+        deploymentSettings:
+            type: AllAtOnce
+            alias: Live
+            postTrafficHook: getHook
+    getHook:
+        handler: handler.getHook
 
     query:
         handler: handler.query

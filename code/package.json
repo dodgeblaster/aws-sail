@@ -19,5 +19,8 @@
     "homepage": "https://github.com/dodgeblaster/aws-sail#readme",
     "devDependencies": {
         "aws-sdk": "^2.751.0"
+    },
+    "dependencies": {
+        "axios": "^0.20.0"
     }
 }

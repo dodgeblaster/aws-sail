@@ -1,0 +1,7 @@
+codeDeploy
+
+- dev = nothing
+- staging = run end2end tests, and check cognito, eventbridge, and sns in db
+            - clear database afterwards
+
+- prod = run end2end tests, and nothing is mocked

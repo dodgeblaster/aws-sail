@@ -1,12 +1,34 @@
 const db = require("./db")
+const cognito = require("./cognito")
+const hook = require("./codeDeploy")
+
 const ALLOWED_MODES = ["real", "local", "recordActionsInDb"]
+
+const httpTryCatch = (fn) => async (e) => {
+    try {
+        const res = await fn(e)
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify(res),
+        }
+    } catch (e) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ mesage: e.message }),
+        }
+    }
+}
+
 module.exports = (config) => {
     // REQUIRED SETUP
     if (!config.setup) {
         throw new Error("You must have config.setup defined")
     }
 
-    let awsSail = {}
+    let awsSail = {
+        httpTryCatch,
+    }
 
     /**
      * Mode:
@@ -35,20 +57,31 @@ module.exports = (config) => {
         })
     }
 
-    if (config.cognito) {
-        const userPool = config.cognito.userPool || false
-        const userPoolClient = config.cognito.userPoolClient || false
+    if (config.cognito && config.db) {
+        const userPoolId = config.cognito.userPool || false
+        const table = config.db.table
+        const region = config.db.region
+
+        awsSail.cognito = cognito({
+            mode,
+            userPoolId,
+            table,
+            region,
+        })
     }
 
-    if (config.eventBridge) {
-        const eventBus = config.eventBridge.eventBus
-    }
+    // if (config.eventBridge) {
+    //     const eventBus = config.eventBridge.eventBus
+    // }
 
-    if (config.sns) {
-    }
+    // if (config.sns) {
+    // }
 
     if (config.codeDeploy) {
-        const endpoint = config.codeDelpoy.endpoint
+        const table = config.db.table
+        const region = config.db.region
+        const endpoint = config.codeDeploy.endpoint
+        awsSail.hook = hook({ endpoint, table, region })
     }
 
     return awsSail
