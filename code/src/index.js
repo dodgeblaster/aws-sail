@@ -20,6 +20,48 @@ const httpTryCatch = (fn) => async (e) => {
     }
 }
 
+const http = {
+    success: (x) => {
+        return {
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
+                "Access-Control-Allow-Headers": "Content-Type",
+            },
+            body: JSON.stringify(x),
+        }
+    },
+
+    validationError: (x) => {
+        return {
+            statusCode: 400,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
+                "Access-Control-Allow-Headers": "Content-Type",
+            },
+            body: JSON.stringify({
+                message: x,
+            }),
+        }
+    },
+
+    serverError: (x) => {
+        return {
+            statusCode: 500,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
+                "Access-Control-Allow-Headers": "Content-Type",
+            },
+            body: JSON.stringify({
+                message: x,
+            }),
+        }
+    },
+}
+
 module.exports = (config) => {
     // REQUIRED SETUP
     if (!config.setup) {
@@ -28,6 +70,7 @@ module.exports = (config) => {
 
     let awsSail = {
         httpTryCatch,
+        http,
     }
 
     /**

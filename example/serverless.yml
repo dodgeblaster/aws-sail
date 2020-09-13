@@ -41,8 +41,11 @@ provider:
           Resource:
               - "*"
 functions:
+    # - - - - - - - - - - - - - - - - - - - -
+    # Get
+    # - - - - - - - - - - - - - - - - - - - -
     get:
-        handler: handler.get
+        handler: ./src/get/index.main
         events:
             - http:
                   path: /get/{id}
@@ -51,33 +54,75 @@ functions:
             type: AllAtOnce
             alias: Live
             postTrafficHook: getHook
-    getHook:
-        handler: handler.getHook
 
+    getHook:
+        handler: ./src/get/index.test
+
+    # - - - - - - - - - - - - - - - - - - - -
+    # Query
+    # - - - - - - - - - - - - - - - - - - - -
     query:
-        handler: handler.query
+        handler: ./src/query/index.main
         events:
             - http:
                   path: /query
                   method: get
+        deploymentSettings:
+            type: AllAtOnce
+            alias: Live
+            postTrafficHook: queryHook
+
+    queryHook:
+        handler: ./src/query/index.test
+    # - - - - - - - - - - - - - - - - - - - -
+    # Create
+    # - - - - - - - - - - - - - - - - - - - -
     create:
-        handler: handler.create
+        handler: ./src/create/index.main
         events:
             - http:
                   path: /create
                   method: get
+        deploymentSettings:
+            type: AllAtOnce
+            alias: Live
+            postTrafficHook: createHook
+
+    createHook:
+        handler: ./src/create/index.test
+
+    # - - - - - - - - - - - - - - - - - - - -
+    # Put
+    # - - - - - - - - - - - - - - - - - - - -
     put:
-        handler: handler.put
+        handler: ./src/put/index.main
         events:
             - http:
                   path: /put
                   method: get
+        deploymentSettings:
+            type: AllAtOnce
+            alias: Live
+            postTrafficHook: putHook
+
+    putHook:
+        handler: ./src/put/index.test
+    # - - - - - - - - - - - - - - - - - - - -
+    # Remove
+    # - - - - - - - - - - - - - - - - - - - -
     remove:
-        handler: handler.remove
+        handler: ./src/remove/index.main
         events:
             - http:
                   path: /remove
                   method: get
+        deploymentSettings:
+            type: AllAtOnce
+            alias: Live
+            postTrafficHook: removeHook
+
+    removeHook:
+        handler: ./src/remove/index.test
 
 resources:
     - ${file(resources/db.yml)}
